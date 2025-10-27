@@ -1,0 +1,28 @@
+# State files
+/var/tmp/cf_protection/
+
+# Logs
+*.log
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+.env
+
+# User configuration (if you create a separate config file)
+config.local.sh
