@@ -13,6 +13,14 @@ Automatic Cloudflare "Under Attack Mode" activation based on server CPU load mon
 - **🔄 Auto-Recovery**: Automatically disables protection when load returns to normal
 - **🚫 Anti-Spam**: Built-in notification cooldown to prevent message spam
 - **📝 Detailed Logging**: Comprehensive logs for monitoring and debugging
+- **👥 Multi-User Mode**: Separate script for per-user CPU monitoring (shared hosting)
+
+## 📁 Available Scripts
+
+| Script | Use Case |
+|--------|----------|
+| `cf_protection.sh` | Single server monitoring based on total CPU load |
+| `cf_protection_multi.sh` | Multi-user/multi-zone monitoring with individual API tokens |
 
 ## 📋 Requirements
 
@@ -256,7 +264,64 @@ The script maintains state in `/var/tmp/cf_protection/`:
 - `last_telegram_notification_*` - Anti-spam timestamps
 - `protection.log` - Activity log
 
-## 🐛 Troubleshooting
+## � Multi-User Mode (cf_protection_multi.sh)
+
+The `cf_protection_multi.sh` script is designed for shared hosting environments or scenarios where you need to monitor CPU usage per system user with individual Cloudflare zones and API tokens.
+
+### Configuration
+
+Edit `cf_protection_multi.sh` and configure:
+
+```bash
+# Telegram Configuration
+TELEGRAM_BOT_TOKEN="YOUR_BOT_TOKEN_HERE"
+TELEGRAM_CHAT_ID="YOUR_CHAT_ID_HERE"
+TELEGRAM_ENABLED=true
+
+# Cloudflare Configuration - Add zones and tokens
+declare -A ZONES
+declare -A TOKENS
+
+# Website 1
+ZONES[username1]="ZONE_ID_1"
+TOKENS[username1]="API_TOKEN_1"
+
+# Website 2
+ZONES[username2]="ZONE_ID_2"
+TOKENS[username2]="API_TOKEN_2"
+```
+
+### Multi-User Settings
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `CPU_THRESHOLD` | 20 | Per-user CPU threshold percentage |
+| `HIGH_LOAD_DURATION` | 120 | Seconds before activating protection |
+| `COOLDOWN_DURATION` | 300 | Seconds of normal load before deactivating |
+
+### How It Works
+
+1. Monitors CPU usage for each configured system user via `ps aux`
+2. Each user has independent protection state
+3. Uses individual Cloudflare API tokens per zone
+4. Singleton enforcement prevents concurrent script runs
+5. State files stored in `/var/tmp/cf_protection_multi/`
+
+### Multi-User State Files
+
+Per-user state files in `/var/tmp/cf_protection_multi/`:
+- `{user}_high_load_start` - High load detection timestamp
+- `{user}_active` - Protection active flag
+- `{user}_normal_start` - Normalization countdown start
+- `protection.log` - Combined activity log
+
+### Setup Cron for Multi-User
+
+```bash
+* * * * * /path/to/cf_protection_multi.sh
+```
+
+## �🐛 Troubleshooting
 
 ### Script doesn't run
 

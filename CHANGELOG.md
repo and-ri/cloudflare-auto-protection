@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-05
+
+### Added
+- New `cf_protection_multi.sh` script for multi-user/multi-zone protection
+- Per-user CPU load monitoring with individual thresholds
+- Individual Cloudflare API tokens for each zone/user
+- Associative arrays for flexible zone/token configuration
+- Singleton enforcement with lockfile to prevent concurrent runs
+- Separate state files per user for independent protection management
+
+### Features
+- Monitor CPU usage per system user
+- Independent protection triggers for each configured zone
+- Easy configuration with `ZONES` and `TOKENS` associative arrays
+- Automatic lockfile cleanup on script exit
+
+### Technical
+- State files stored in `/var/tmp/cf_protection_multi/`
+- Requires: bc, curl, awk, ps
+- Compatible with shared hosting environments
+
 ## [1.0.0] - 2025-10-27
 
 ### Added
